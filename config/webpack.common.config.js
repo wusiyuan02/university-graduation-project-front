@@ -7,7 +7,7 @@ module.exports = {
   },
   
   output: {
-    filename: 'js/[name]-[hash:6]-boundle.js',
+    filename: 'js/[name]_[hash:6]_boundle.js',
     path: path.resolve(__dirname, '../dist'),
   },
 
@@ -27,7 +27,7 @@ module.exports = {
             ],
           },
         },
-      },
+      }
     ],
   },
 }

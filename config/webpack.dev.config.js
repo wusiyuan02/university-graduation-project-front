@@ -2,11 +2,12 @@
 const path = require('path');
 const { merge } = require('webpack-merge');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+
 const webpackConfigCom = require('./webpack.common.config.js');
 
 module.exports = merge(webpackConfigCom, {
   mode: 'development',
-  
+
   devtool:'inline-source-map',
 
   devServer: {
@@ -21,5 +22,12 @@ module.exports = merge(webpackConfigCom, {
     filename: 'index.html',
     inject: 'body',
     minify: false
-  })]
+  })],
+
+  module: {
+    rules: [{
+      test: /\.less$/,
+      use: ['style-loader', 'css-loader', 'less-loader']
+    }]
+  }
 })
