@@ -1,14 +1,14 @@
-const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path')
+const { CleanWebpackPlugin } = require('clean-webpack-plugin')
 
 module.exports = {
   entry: {
     index: './src/index.js'
   },
-  
+
   output: {
     filename: 'js/[name]_[hash:6]_boundle.js',
-    path: path.resolve(__dirname, '../dist'),
+    path: path.resolve(__dirname, '../dist')
   },
 
   plugins: [new CleanWebpackPlugin()],
@@ -23,11 +23,11 @@ module.exports = {
             presets: ['@babel/preset-env', '@babel/preset-react'],
             plugins: [
               '@babel/plugin-transform-runtime',
-              '@babel/plugin-proposal-class-properties',
-            ],
-          },
-        },
+              '@babel/plugin-proposal-class-properties'
+            ]
+          }
+        }
       }
-    ],
-  },
+    ]
+  }
 }

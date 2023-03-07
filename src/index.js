@@ -1,10 +1,15 @@
-import React from "react";
-import ReactDOM from "React-dom/client";
-import style from './style.module.less';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import { HashRouter } from 'react-router-dom'
 
-const App = () => {
-  return <div className={style.hello}>hello</div>;
-}
+import './index.css'
 
-const root = document.getElementById('root');
-ReactDOM.createRoot(root).render(<App />);
+const root = document.getElementById('root')
+ReactDOM.createRoot(root).render((
+<React.StrictMode>
+  <HashRouter>
+    <App />
+  </HashRouter>
+</React.StrictMode>
+))
