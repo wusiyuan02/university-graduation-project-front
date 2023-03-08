@@ -2,10 +2,10 @@
  * @Author: SiyuanWu
  * @Date: 2023-03-08 17:37:56
  * @LastEditors: SiyuanWu
- * @LastEditTime: 2023-03-08 19:55:42
+ * @LastEditTime: 2023-03-08 20:16:11
  * @Description:
  */
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Button, DatePicker, Form, Input, InputNumber, message, Radio, Select, Space, Spin } from 'antd'
 import { MARITAL_STATUS_OPTIONS, DEGREE_OPTIONS, MONTHLY_SALARY_OPTIONS } from '@constants'
 // import dayjs from 'dayjs'
@@ -13,9 +13,8 @@ import { MARITAL_STATUS_OPTIONS, DEGREE_OPTIONS, MONTHLY_SALARY_OPTIONS } from '
 import { postMyEdit } from '@apis/my'
 const { Item } = Form
 
-const BaseInfo = ({ userInfo }) => {
+const BaseInfo = ({ userInfo, formInstance }) => {
   const [loading, setLoading] = useState(false)
-  const [formInstance] = Form.useForm()
 
   const handleFinish = async (values) => {
     const params = {
@@ -35,10 +34,6 @@ const BaseInfo = ({ userInfo }) => {
       message.error(err)
     }
   }
-
-  useEffect(() => {
-    formInstance.setFieldsValue({ ...userInfo })
-  }, [])
 
   return (
     <Spin spinning={loading}>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 
-import { Card, Col, Layout, message, Row, Spin, Tabs } from 'antd'
+import { Card, Col, Form, Layout, message, Row, Spin, Tabs } from 'antd'
 
 import BaseInfo from './components/BaseInfo'
 import PersonalInfo from './components/PersonalInfo'
@@ -8,12 +8,14 @@ import PasswordEdit from './components/PasswordEdit'
 
 import style from './index.module.less'
 import { getMyDetail } from '../../apis/my'
+import dayjs from 'dayjs'
 
 const { username } = JSON.parse(localStorage.getItem('user_info'))
 
 const My = () => {
   const [loading, setLoading] = useState(false)
   const [userInfo, setUserInfo] = useState({ username })
+  const [formInstance] = Form.useForm()
 
   const getDetail = async () => {
     setLoading(true)
@@ -24,6 +26,7 @@ const My = () => {
         throw msg
       }
       setUserInfo(data)
+      formInstance.setFieldsValue({ ...data, birthday: data.birthday ? dayjs(data.birthday) : undefined })
     } catch (err) {
       message.error(err)
     }
@@ -60,7 +63,7 @@ const My = () => {
               {
                 key: 'base',
                 label: '基本信息',
-                children: <BaseInfo userInfo={userInfo} />
+                children: <BaseInfo userInfo={userInfo} formInstance={formInstance} />
               }, {
                 key: 'personal',
                 label: '个性信息',
