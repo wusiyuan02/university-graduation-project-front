@@ -12,15 +12,15 @@ const MENU_ITEMS = [{
 }, {
   key: 'talk',
   label: <Link to='/talk'>聊天室</Link>,
-  icon: <AppstoreOutlined />
+  icon: <MailOutlined />
 }, {
   key: 'community',
   label: <Link to='/community'>社区</Link>,
-  icon: <SettingOutlined />
+  icon: <AppstoreOutlined />
 }, {
   key: 'my',
   label: <Link to='/my'>我的</Link>,
-  icon: <MailOutlined />
+  icon: <SettingOutlined />
 }]
 
 const MyMenu = () => {

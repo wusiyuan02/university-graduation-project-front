@@ -43,6 +43,8 @@ module.exports = merge(webpackConfigCom, {
       axios: path.resolve(__dirname, '../node_modules/axios/dist/axios.js'),
       '@components': path.resolve(__dirname, '../src/components'),
       '@utils': path.resolve(__dirname, '../src/utils'),
+      '@assets': path.resolve(__dirname, '../src/assets'),
+      '@router': path.resolve(__dirname, '../src/router'),
       '@constants': path.resolve(__dirname, '../src/constants'),
       src: path.resolve(__dirname, '../src')
     }

@@ -7,8 +7,10 @@
   "include": ["src/**/*"],
   "paths": {
     "@components/*": ["src/components/*"],
+    "@assets/*": ["src/assets/*"],
     "@stores/*": ["src/stores/*"],
     "@constants/*": ["src/constants/*"],
+    "@router/*": ["src/router/*"],
     "@utils/*": ["src/utils/*"]
   }
 }
