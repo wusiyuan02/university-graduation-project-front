@@ -2,13 +2,13 @@ import React, { useEffect, useState } from 'react'
 
 import { Menu } from 'antd'
 
-import { AppstoreOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons'
+import { AppstoreOutlined, BankOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
 import { Link, useLocation } from 'react-router-dom'
 
 const MENU_ITEMS = [{
   key: 'home',
   label: <Link to='/home'>首页</Link>,
-  icon: <MailOutlined />
+  icon: <BankOutlined />
 }, {
   key: 'talk',
   label: <Link to='/talk'>聊天室</Link>,
@@ -20,13 +20,14 @@ const MENU_ITEMS = [{
 }, {
   key: 'my',
   label: <Link to='/my'>我的</Link>,
-  icon: <SettingOutlined />
+  icon: <UserOutlined />
 }]
 
 const MyMenu = () => {
   const [nowMenuItem, setNowMenuItem] = useState([])
 
   const { pathname } = useLocation()
+
   useEffect(() => {
     const nextMenuItem = pathname.split('/').filter(key => key)
     setNowMenuItem(nextMenuItem)
@@ -37,12 +38,13 @@ const MyMenu = () => {
   }
 
   return (
-  <Menu
-  theme="dark"
-  mode="horizontal"
-  selectedKeys={nowMenuItem}
-  onClick={handleChangeOpenKeys}
-  items={MENU_ITEMS}
-/>)
+    <Menu
+      theme="dark"
+      mode="horizontal"
+      selectedKeys={nowMenuItem}
+      onClick={handleChangeOpenKeys}
+      items={MENU_ITEMS}
+      style={{ flex: 1 }}
+    />)
 }
 export default MyMenu

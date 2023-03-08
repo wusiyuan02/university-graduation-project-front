@@ -15,7 +15,14 @@ module.exports = merge(webpackConfigCom, {
     static: path.join(__dirname, '../dist'),
     port: 9000,
     compress: true,
-    open: true
+    open: true,
+    proxy: { // 配置代理（只在本地开发有效，上线无效）
+      '/api': {
+        target: 'http://localhost:8088', // 这是本地用node写的一个服务，用webpack-dev-server起的服务默认端口是8080
+        pathRewrite: { '/api': '' }, // 后台在转接的时候url中是没有 /api 的
+        changeOrigin: true // 加了这个属性，那后端收到的请求头中的host是目标地址 target
+      }
+    }
   },
 
   plugins: [new HtmlWebpackPlugin({
@@ -40,10 +47,10 @@ module.exports = merge(webpackConfigCom, {
   resolve: {
     extensions: ['.js', '.jsx', '.json'],
     alias: {
-      axios: path.resolve(__dirname, '../node_modules/axios/dist/axios.js'),
       '@components': path.resolve(__dirname, '../src/components'),
       '@utils': path.resolve(__dirname, '../src/utils'),
       '@assets': path.resolve(__dirname, '../src/assets'),
+      '@apis': path.resolve(__dirname, '../src/apis'),
       '@router': path.resolve(__dirname, '../src/router'),
       '@constants': path.resolve(__dirname, '../src/constants'),
       src: path.resolve(__dirname, '../src')

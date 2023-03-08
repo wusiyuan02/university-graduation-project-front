@@ -8,13 +8,15 @@ import ROUTES_CONFIG from './router'
 
 const App = () => {
   return (
-     <Routes>
+
+    <Routes>
       <Route path="/" element={<Login />} />
       <Route path="/login" element={<Login />} />
       <Route element={<MyLayout />}>
-      {ROUTES_CONFIG.map(routeItem => <Route key={routeItem.key} {...routeItem} />)}
-     </Route>
+        {ROUTES_CONFIG.map(routeItem => <Route key={routeItem.key} {...routeItem} />)}
+      </Route>
     </Routes>
+
   )
 }
 

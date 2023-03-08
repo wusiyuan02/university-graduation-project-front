@@ -10,6 +10,7 @@
     "@assets/*": ["src/assets/*"],
     "@stores/*": ["src/stores/*"],
     "@constants/*": ["src/constants/*"],
+    "@apis/*": ["src/apis/*"],
     "@router/*": ["src/router/*"],
     "@utils/*": ["src/utils/*"]
   }
