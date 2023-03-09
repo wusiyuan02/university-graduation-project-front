@@ -20,7 +20,7 @@ const MyLayout = () => {
       <div className={style.logo}></div>
       <div className={style.titleName}>不换</div>
       <MyMenu />
-      <div className={style.name} onClick={handleGoDetail}>{userInfo.username}</div>
+      <div className={style.name} onClick={handleGoDetail}>{userInfo.nickname || userInfo.username}</div>
       <LoginOut />
     </Header>
     <Content

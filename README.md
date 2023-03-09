@@ -98,21 +98,7 @@ const My = () => {
           <Item label="月薪" name="monthlySalary">
             <Select style={{ width: 300 }} options={MONTHLY_SALARY_OPTIONS} />
           </Item>
-          <Item label="个性签名" name="signature">
-            <Input.TextArea style={{ width: 300 }} maxLength={500} />
-          </Item>
-
-          <Item label="请选择描述自己的标签" name="personTags" tooltip={<div>你还想不想找妹子？</div>}>
-            <Select style={{ width: 300 }} mode="tags" options={TAGS_OPTIONS} placeholder="支持手动输入" />
-          </Item>
-          <Item label="请选择描述心仪的标签" name="loveTags" tooltip={<div>选择心仪的标签，本人会帮你更准确的推送哦~~</div>}>
-            <Select style={{ width: 300 }} mode="tags" options={TAGS_OPTIONS} placeholder="支持手动输入" />
-          </Item>
-          <Item wrapperCol={{ span: 12, offset: 6 }}>
-            <Button type="primary" htmlType="submit">
-              提交
-            </Button>
-          </Item>
+         
         </Form>
       </Layout.Sider>
       <Layout.Content>

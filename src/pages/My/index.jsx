@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react'
+/* eslint-disable indent */
+import React, { useState } from 'react'
 
-import { Card, Col, Form, Layout, message, Row, Spin, Tabs } from 'antd'
+import { Button, Card, Col, Layout, message, Row, Spin, Tabs } from 'antd'
 
 import BaseInfo from './components/BaseInfo'
 import PersonalInfo from './components/PersonalInfo'
@@ -8,14 +9,14 @@ import PasswordEdit from './components/PasswordEdit'
 
 import style from './index.module.less'
 import { getMyDetail } from '../../apis/my'
-import dayjs from 'dayjs'
+import { useFirstEffect } from '@utils/useFirstEffect'
 
 const { username } = JSON.parse(localStorage.getItem('user_info'))
 
 const My = () => {
   const [loading, setLoading] = useState(false)
+  const [isEdit, setIsEdit] = useState(false)
   const [userInfo, setUserInfo] = useState({ username })
-  const [formInstance] = Form.useForm()
 
   const getDetail = async () => {
     setLoading(true)
@@ -26,13 +27,12 @@ const My = () => {
         throw msg
       }
       setUserInfo(data)
-      formInstance.setFieldsValue({ ...data, birthday: data.birthday ? dayjs(data.birthday) : undefined })
     } catch (err) {
       message.error(err)
     }
   }
 
-  useEffect(() => {
+  useFirstEffect(() => {
     getDetail()
   }, [])
 
@@ -46,6 +46,8 @@ const My = () => {
               <Col className={style.antColContent} span={18}>{userInfo.nickname}</Col>
               <Col className={style.antCol} span={6}>用户名:</Col>
               <Col className={style.antColContent} span={18}>{userInfo.username}</Col>
+              <Col className={style.antCol} span={6}>个性签名:</Col>
+              <Col className={style.antColContent} span={18}>{userInfo.signature}</Col>
               <Col className={style.antCol} span={6}>电话:</Col>
               <Col className={style.antColContent} span={18}>{userInfo.telephone}</Col>
               <Col className={style.antCol} span={6}>QQ/微信:</Col>
@@ -58,26 +60,38 @@ const My = () => {
           </Card>
         </Layout.Sider>
         <Layout.Content style={{ background: '#fff', padding: '16px', minWidth: 600 }}>
-          <Card title="信息修改" style={{ minHeight: 'calc(100vh - 128px)' }} bodyStyle={{ padding: '0 24px' }}>
-            <Tabs items={[
-              {
-                key: 'base',
-                label: '基本信息',
-                children: <BaseInfo userInfo={userInfo} formInstance={formInstance} />
-              }, {
-                key: 'personal',
-                label: '个性信息',
-                children: <PersonalInfo userInfo={userInfo} />
-              }, {
-                key: 'password',
-                label: '修改密码',
-                children: <PasswordEdit />
-              }
-            ]} />
+          <Card
+            title={
+              <div className={style.cardTitle}>
+                <span>{isEdit ? '信息修改' : '查看信息'}</span>
+                {isEdit || <Button onClick={() => setIsEdit(true)} >编辑</Button>}
+              </div>
+            }
+            style={{ minHeight: 'calc(100vh - 128px)' }}
+            bodyStyle={{ padding: '0 24px', position: 'relative' }}>
+            <Tabs
+              // style={{}}
+              items={[
+                {
+                  key: 'base',
+                  label: '基本信息',
+                  children: <BaseInfo userInfo={userInfo} setUserInfo={setUserInfo} isEdit={isEdit} setIsEdit={setIsEdit} />
+                }, {
+                  key: 'personal',
+                  label: '个性信息',
+                  children: <PersonalInfo userInfo={userInfo} setUserInfo={setUserInfo} isEdit={isEdit} setIsEdit={setIsEdit} />
+                }, isEdit
+                  ? {
+                    key: 'password',
+                    label: '修改密码',
+                    children: <PasswordEdit setIsEdit={setIsEdit} />
+                  }
+                  : undefined
+              ]} />
           </Card>
         </Layout.Content>
       </Layout >
-    </Spin>
+    </Spin >
   )
 }
 
