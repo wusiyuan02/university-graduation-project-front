@@ -2,7 +2,7 @@
  * @Author: SiyuanWu
  * @Date: 2023-03-08 17:37:56
  * @LastEditors: SiyuanWu
- * @LastEditTime: 2023-03-09 10:30:32
+ * @LastEditTime: 2023-03-09 17:57:52
  * @Description:
  */
 import React, { useEffect, useState } from 'react'
@@ -55,7 +55,7 @@ const BaseInfo = ({ userInfo, setUserInfo, isEdit, setIsEdit }) => {
       <Spin spinning={loading}>
         <Form labelCol={{ span: 12 }}
           wrapperCol={{ span: 12 }}
-          style={{ maxWidth: 600 }}
+          style={{ maxWidth: 600, marginTop: 16 }}
           onFinish={handleFinish}
           form={formInstance}
           scrollToFirstError={true}

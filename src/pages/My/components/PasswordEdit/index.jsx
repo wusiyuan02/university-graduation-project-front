@@ -2,7 +2,7 @@
  * @Author: SiyuanWu
  * @Date: 2023-03-08 17:38:39
  * @LastEditors: SiyuanWu
- * @LastEditTime: 2023-03-09 10:56:35
+ * @LastEditTime: 2023-03-09 17:57:44
  * @Description:
  */
 import { Button, Form, Input, message, Space, Spin } from 'antd'
@@ -38,7 +38,7 @@ const PasswordEdit = ({ setIsEdit }) => {
     <Spin spinning={loading}>
       <Form labelCol={{ span: 12 }}
         wrapperCol={{ span: 12 }}
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: 600, marginTop: 16 }}
         onFinish={handleFinish}
         form={formInstance}
         scrollToFirstError={true}

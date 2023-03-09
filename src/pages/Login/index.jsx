@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-
 import { postSignIn, postLoginIn } from '@apis/login'
+import md5 from 'blueimp-md5'
 
 import style from './index.module.less'
 import { Input, message, Spin } from 'antd'
@@ -22,14 +22,14 @@ const Login = () => {
   const handlePassWordChange = ({ target: { value } }) => {
     setLoginInfo({
       ...loginInfo,
-      password: value
+      password: md5(value)
     })
   }
 
   const handleRePassWordChange = ({ target: { value } }) => {
     setLoginInfo({
       ...loginInfo,
-      repassword: value
+      repassword: md5(value)
     })
   }
 
@@ -84,10 +84,10 @@ const Login = () => {
         <Input value={loginInfo.username} onChange={handleUserNameChange} type="text" placeholder="请输入用户名" />
       </div>
       <div className={style.inputBox}>
-        <Input value={loginInfo.password} onChange={handlePassWordChange} type="password" placeholder="请输入密码" />
+        <Input onChange={handlePassWordChange} type="password" placeholder="请输入密码" />
       </div>
       {!isLogin && <div className={style.inputBox}>
-        <Input value={loginInfo.repassword} onChange={handleRePassWordChange} type="password" placeholder="请再次输入密码" />
+        <Input onChange={handleRePassWordChange} type="password" placeholder="请再次输入密码" />
       </div>}
       <button onClick={isLogin ? handleLoginIn : handleSignIn}>{isLogin ? '登录' : '注册'}</button>
     </div>

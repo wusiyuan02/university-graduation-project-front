@@ -2,7 +2,7 @@
  * @Author: SiyuanWu
  * @Date: 2023-03-08 17:38:17
  * @LastEditors: SiyuanWu
- * @LastEditTime: 2023-03-09 10:59:41
+ * @LastEditTime: 2023-03-09 17:57:02
  * @Description:
  */
 import React, { useEffect, useState } from 'react'
@@ -48,7 +48,7 @@ const PersonalInfo = ({ userInfo, setUserInfo, isEdit, setIsEdit }) => {
     <Spin spinning={loading}>
       <Form labelCol={{ span: 12 }}
         wrapperCol={{ span: 12 }}
-        style={{ maxWidth: 600 }}
+        style={{ maxWidth: 600, marginTop: 16 }}
         onFinish={handleFinish}
         form={formInstance}
         scrollToFirstError={true}

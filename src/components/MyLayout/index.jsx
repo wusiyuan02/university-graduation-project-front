@@ -2,7 +2,7 @@ import React from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
 
 import style from './index.module.less'
-import { Layout, Spin } from 'antd'
+import { Avatar, Layout, Spin } from 'antd'
 import MyMenu from './components/MyMenu'
 import LoginOut from './components/LoginOut'
 
@@ -20,8 +20,9 @@ const MyLayout = () => {
       <div className={style.logo}></div>
       <div className={style.titleName}>不换</div>
       <MyMenu />
-      <div className={style.name} onClick={handleGoDetail}>{userInfo.nickname || userInfo.username}</div>
       <LoginOut />
+      <div className={style.name} onClick={handleGoDetail}>{userInfo.nickname || userInfo.username}</div>
+      <Avatar src={userInfo.avatar} size="large" style={{ marginLeft: 16 }} />
     </Header>
     <Content
       style={{

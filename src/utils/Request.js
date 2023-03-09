@@ -101,13 +101,12 @@ export const get = (url, params = {}) => {
  * @param {*} params 请求参数
  * @returns {Promise}
  */
-export const post = (url, params) => {
-  const config = {
-    headers: {
-      'h5-requested-with': 'web',
-      'Content-Type': 'application/json'
-    }
+export const post = (url, params, config = {
+  headers: {
+    'h5-requested-with': 'web',
+    'Content-Type': 'application/json'
   }
+}) => {
   params = typeof params === 'string' ? params : JSON.stringify(params)
   return new Promise((resolve, reject) => {
     axios.post(url, params, config).then(
