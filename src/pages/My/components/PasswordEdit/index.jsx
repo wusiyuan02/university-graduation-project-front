@@ -36,7 +36,7 @@ const PasswordEdit = ({ setIsEdit }) => {
 
   return (
     <Spin spinning={loading}>
-      <Form labelCol={{ span: 12 }}
+      <Form labelCol={{ span: 8 }}
         wrapperCol={{ span: 12 }}
         style={{ maxWidth: 600, marginTop: 16 }}
         onFinish={handleFinish}
@@ -51,7 +51,6 @@ const PasswordEdit = ({ setIsEdit }) => {
             }
           ]}>
           <Input type="password" placeholder="请输入密码" />
-
         </Item>
         <Item label="新密码" name="newPassword"
           rules={[
@@ -76,7 +75,7 @@ const PasswordEdit = ({ setIsEdit }) => {
         ]}>
           <Input type="password" placeholder="请输入密码" />
         </Item>
-        <Item wrapperCol={{ span: 12, offset: 12 }}>
+        <Item wrapperCol={{ span: 8, offset: 10 }}>
           <Space size="large">
             <Button type="primary" htmlType="submit">
               提交

@@ -1,8 +1,8 @@
-console.log('hello')
 export const MARITAL_STATUS_OPTIONS = [
   { label: '未婚', value: '1' },
   { label: '离婚', value: '2' },
-  { label: '丧偶', value: '3' }
+  { label: '已婚', value: '3' },
+  { label: '丧偶', value: '4' }
 ]
 
 export const DEGREE_OPTIONS = [
@@ -43,3 +43,5 @@ export const TAGS_OPTIONS = [
   { label: '吃吃吃', value: '18' },
   { label: '西安慢摇', value: '19' }
 ]
+
+export const COLOR_LIST = ['magenta', 'red', 'volcano', 'orange', 'gold', 'lime', 'green']

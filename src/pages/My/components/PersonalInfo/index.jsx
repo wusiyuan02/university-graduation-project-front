@@ -46,7 +46,7 @@ const PersonalInfo = ({ userInfo, setUserInfo, isEdit, setIsEdit }) => {
 
   return (
     <Spin spinning={loading}>
-      <Form labelCol={{ span: 12 }}
+      <Form labelCol={{ span: 8 }}
         wrapperCol={{ span: 12 }}
         style={{ maxWidth: 600, marginTop: 16 }}
         onFinish={handleFinish}
@@ -68,7 +68,7 @@ const PersonalInfo = ({ userInfo, setUserInfo, isEdit, setIsEdit }) => {
         <Item label={<span>内<span style={{ color: 'red' }}>♥</span>独白</span>} name="innerMonologue" tooltip={<div>还羞涩起来了？</div>}>
           <Input.TextArea style={{ width: 260 }} maxLength={260} placeholder="sir, say your idea!" />
         </Item>
-        {isEdit && <Item wrapperCol={{ span: 12, offset: 12 }}>
+        {isEdit && <Item wrapperCol={{ span: 8, offset: 10 }}>
           <Space size="large">
             <Button type="primary" htmlType="submit">
               提交
