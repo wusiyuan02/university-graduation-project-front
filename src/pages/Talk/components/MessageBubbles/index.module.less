@@ -1,0 +1,45 @@
+.otherMessageBubble {
+  padding: 8px;
+  padding-right: 10px;
+  display: inline-block;
+  background: #fff;
+  margin: 8px;
+  border-radius: 6px;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-right-color: #fff;
+    left: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
+
+.myMessageBubble {
+  padding: 8px;
+  padding-left: 10px;
+  display: inline-block;
+  background: rgb(31, 231, 31);
+  margin: 8px;
+  border-radius: 6px;
+  position: relative;
+
+  &::after {
+    content: "";
+    position: absolute;
+    display: inline-block;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+    border-left-color: rgb(31, 231, 31);
+    right: -11px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
+}
