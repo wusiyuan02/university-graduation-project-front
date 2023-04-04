@@ -1,49 +1,18 @@
-import React, { useEffect, useState } from 'react'
-import io from 'socket.io-client'
+import React, { useState } from 'react'
 import { Input, Layout } from 'antd'
 import MessageBubbles from '../MessageBubbles'
-import dayjs from 'dayjs'
 
 const userInfo = JSON.parse(localStorage.getItem('user_info'))
 
-const socket = io('http://localhost:3000', { transports: ['websocket'] })
-
-socket.on('connect', () => {
-  console.log('链接成功！')
-})
-
-const ChatBox = ({ chatPersonInfo }) => {
-  const [sendMessageInfo, setSendMessageInfo] = useState({
-    sendUsername: userInfo.username
-  })
-
-  let [messageList, setMessageList] = useState([])
-  useEffect(() => {
-    setSendMessageInfo({
-      ...sendMessageInfo,
-      receiverUsername: chatPersonInfo.username
-    })
-  }, [chatPersonInfo.username])
-
-  socket.on('receiveMessage', (messageInfo) => {
-    messageList = [...messageList, messageInfo]
-    setMessageList(messageList)
-  })
+const ChatBox = ({ chatPersonInfo, onMessageChange, messageList }) => {
+  const [messageContent, setMessageContent] = useState('')
 
   const handleSendMessage = value => {
-    socket.emit('sendMessage', {
-      ...sendMessageInfo,
-      content: value,
-      sendTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
-    }, (response) => {
-      messageList = [...messageList, response]
-      setMessageList(messageList)
-      setSendMessageInfo({
-        ...sendMessageInfo,
-        content: '',
-        sendTime: undefined
-      })
+    onMessageChange({
+      receiverUsername: chatPersonInfo.username,
+      content: value
     })
+    setMessageContent('')
   }
 
   return (
@@ -60,17 +29,14 @@ const ChatBox = ({ chatPersonInfo }) => {
         {chatPersonInfo.nickname || chatPersonInfo.username}
       </Layout.Header>
       <Layout.Content style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-        {messageList.map(messageItem => <MessageBubbles key={messageItem._id} username={userInfo.username} socket={socket} {...messageItem} />)}
+        {(messageList || []).map(messageItem => <MessageBubbles key={messageItem._id} username={userInfo.username} {...messageItem} />)}
       </Layout.Content>
       <Layout.Footer style={{ padding: 16 }}>
         <Input.Search
           enterButton="发送"
-          value={sendMessageInfo.content}
+          value={messageContent}
           onChange={({ target: { value } }) => {
-            setSendMessageInfo({
-              ...sendMessageInfo,
-              content: value
-            })
+            setMessageContent(value)
           }}
           onSearch={handleSendMessage} />
       </Layout.Footer>

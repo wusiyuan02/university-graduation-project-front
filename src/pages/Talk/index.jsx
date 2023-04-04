@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from 'react'
 
+import io from 'socket.io-client'
+import dayjs from 'dayjs'
+import { getFriendApplication, postFriendsList, getFriendTalkMessage } from '@apis/talk'
+
 import { Avatar, List, message, Modal, Space } from 'antd'
 import {
   UsergroupAddOutlined,
@@ -11,7 +15,13 @@ import ChatBox from './components/ChatBox'
 import SearchFriendsModal from './components/SearchFriendsModal'
 import FriendsApplicationModal from './components/FriendsApplicationModal'
 
-import { getFriendApplication, postFriendsList } from '@apis/talk'
+const socket = io('http://localhost:3000', { transports: ['websocket'] })
+
+const userInfo = JSON.parse(localStorage.getItem('user_info'))
+
+socket.on('connect', () => {
+  console.log('链接成功！')
+})
 
 const Talk = () => {
   const [addFriendsVisible, setAddFriendsVisible] = useState(false)
@@ -20,14 +30,46 @@ const Talk = () => {
   const [userInfoVisible, setUserInfoVisible] = useState(false)
   const [applicationList, setApplicationList] = useState([])
   const [friendsList, setFriendsList] = useState([])
-  const [userInfo, setUserInfo] = useState(null)
+  const [personInfo, setPersonInfo] = useState(null)
   const [chatInfo, setChatInfo] = useState({})
+  const [messageList, setMessageList] = useState({})
 
   useEffect(() => {
     getApplicationList()
     getFriendsList()
+    getMessageList()
   }, [])
 
+  const getMessageList = async () => {
+    try {
+      const { code, data, msg } = await getFriendTalkMessage()
+      if (code !== 0) {
+        throw msg
+      }
+      if (data.length === 0) {
+        return
+      }
+      console.log(data)
+      setMessageList(data)
+    } catch (err) {
+      message.error(err)
+    }
+  }
+
+  // 接受信息的回调函数
+  socket.on('receiveMessage', (messageInfo) => {
+    const { sendUsername, receiverUsername } = messageInfo
+    const nextMessageList = { ...messageList }
+    const messageListKey = sendUsername === userInfo.username ? receiverUsername : sendUsername
+    if ([messageListKey] in nextMessageList) {
+      nextMessageList[messageListKey] = [...nextMessageList[messageListKey], messageInfo]
+    } else {
+      nextMessageList[messageListKey] = [messageInfo]
+    }
+    setMessageList(nextMessageList)
+  })
+
+  // 获取好友列表
   const getFriendsList = async () => {
     try {
       const { code, data, msg } = await postFriendsList()
@@ -43,7 +85,7 @@ const Talk = () => {
       message.error(err)
     }
   }
-
+  // 获取好友申请列表
   const getApplicationList = async () => {
     try {
       const { code, data, msg } = await getFriendApplication()
@@ -54,6 +96,20 @@ const Talk = () => {
     } catch (err) {
       message.error(err)
     }
+  }
+
+  // 发送信息
+  const handleMessageChange = (sendMessageInfo) => {
+    socket.emit('sendMessage', {
+      sendUsername: userInfo.username,
+      ...sendMessageInfo,
+      sendTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    }, (response) => {
+      console.log(response)
+      const nextMessageList = { ...messageList }
+      nextMessageList[sendMessageInfo.receiverUsername] = [...nextMessageList[sendMessageInfo.receiverUsername] || [], response]
+      setMessageList(nextMessageList)
+    })
   }
 
   return (
@@ -115,7 +171,7 @@ const Talk = () => {
                 size={60}
                 onClick={e => {
                   e.stopPropagation()
-                  setUserInfo(item)
+                  setPersonInfo(item)
                   setUserInfoVisible(true)
                 }}
               />
@@ -128,11 +184,15 @@ const Talk = () => {
           )
         }}
       />
-      <ChatBox chatPersonInfo={chatInfo} />
-      {userInfo && (
+      <ChatBox
+        chatPersonInfo={chatInfo}
+        onMessageChange={handleMessageChange}
+        messageList={messageList[chatInfo.username]}
+      />
+      {personInfo && (
         <UserInfoModal
           visible={userInfoVisible}
-          userInfo={userInfo}
+          userInfo={personInfo}
           onOk={() => setUserInfoVisible(false)}
           onCancel={() => setUserInfoVisible(false)}
         />
@@ -148,7 +208,7 @@ const Talk = () => {
           <FriendsApplicationModal
             listData={applicationList}
             onListChange={setApplicationList}
-            setUserInfo={setUserInfo}
+            setUserInfo={setPersonInfo}
             setUserInfoVisible={setUserInfoVisible}
           />
         </Modal>
@@ -162,7 +222,7 @@ const Talk = () => {
           onCancel={() => setAddFriendsVisible(false)}
         >
           <SearchFriendsModal
-            setUserInfo={setUserInfo}
+            setUserInfo={setPersonInfo}
             setUserInfoVisible={setUserInfoVisible}
           />
         </Modal>

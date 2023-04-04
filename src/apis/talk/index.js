@@ -17,3 +17,5 @@ export const postFriendApplicationRefuse = params =>
   post('/api/friends/refuse', params)
 
 export const postFriendsList = params => post('/api/friends/list', params)
+
+export const getFriendTalkMessage = () => get('/api/friends/allMessage')
