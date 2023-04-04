@@ -4,7 +4,7 @@ import io from 'socket.io-client'
 import dayjs from 'dayjs'
 import { getFriendApplication, postFriendsList, getFriendTalkMessage } from '@apis/talk'
 
-import { Avatar, List, message, Modal, Space } from 'antd'
+import { Avatar, Input, List, message, Modal, Space } from 'antd'
 import {
   UsergroupAddOutlined,
   MailOutlined,
@@ -32,6 +32,8 @@ const Talk = () => {
   const [applicationList, setApplicationList] = useState([])
   // 描述好友列表
   const [friendsList, setFriendsList] = useState([])
+  // 搜索后好友列表
+  const [friendsFilterList, setFriendsFilterList] = useState([])
   // 描述个人信息弹窗
   const [personInfo, setPersonInfo] = useState(null)
   // 聊天框个人信息
@@ -67,13 +69,12 @@ const Talk = () => {
   // 接受信息的回调函数
   socket.on('receiveMessage', (messageInfo) => {
     const { sendUsername, receiverUsername } = messageInfo
+
     const nextMessageList = { ...messageList }
     const messageListKey = sendUsername === userInfo.username ? receiverUsername : sendUsername
-    if ([messageListKey] in nextMessageList) {
-      nextMessageList[messageListKey] = [...nextMessageList[messageListKey], messageInfo]
-    } else {
-      nextMessageList[messageListKey] = [messageInfo]
-    }
+
+    nextMessageList[messageListKey] = [...(nextMessageList[messageListKey] || []), messageInfo]
+
     setMessageList(nextMessageList)
     setMessageFlagList({ ...message, [sendUsername]: false })
   })
@@ -89,6 +90,7 @@ const Talk = () => {
         return
       }
       setFriendsList(data)
+      setFriendsFilterList(data)
       setChatInfo(data[0])
     } catch (err) {
       message.error(err)
@@ -114,40 +116,47 @@ const Talk = () => {
       ...sendMessageInfo,
       sendTime: dayjs().format('YYYY-MM-DD HH:mm:ss')
     }, (response) => {
-      console.log(response)
       const nextMessageList = { ...messageList }
       nextMessageList[sendMessageInfo.receiverUsername] = [...nextMessageList[sendMessageInfo.receiverUsername] || [], response]
       setMessageList(nextMessageList)
     })
   }
 
-  return (
+  // 好友搜索
+  const handleFriendsFilter = (value) => {
+    const nextFriendsFilterList = friendsList.filter(friend => friend.username.includes(value) || friend?.nickname?.includes(value))
+
+    setFriendsFilterList(nextFriendsFilterList)
+  }
+
+  return (<>
     <div style={{ display: 'flex', height: 'calc(100vh - 96px)' }}>
       <List
         bordered={true}
         className={style.leftList}
         header={
-          <div
-            className={style.leftAsideHeader}
-          >
-            <h3>好友列表</h3>
-            <Space size={16}>
-              <MailOutlined
-                style={{
-                  fontSize: 16,
-                  cursor: 'pointer',
-                  color: applicationList?.length > 0 && 'red'
-                }}
-                onClick={() => setFriendsApplicationVisible(true)}
-              />
-              <UsergroupAddOutlined
-                style={{ fontSize: 16, cursor: 'pointer' }}
-                onClick={() => setAddFriendsVisible(true)}
-              />
-            </Space>
-          </div>
+          <>
+            <div className={style.leftAsideHeader} >
+              <h3>好友列表</h3>
+              <Space size={16}>
+                <MailOutlined
+                  style={{
+                    fontSize: 16,
+                    cursor: 'pointer',
+                    color: applicationList?.length > 0 && 'red'
+                  }}
+                  onClick={() => setFriendsApplicationVisible(true)}
+                />
+                <UsergroupAddOutlined
+                  style={{ fontSize: 16, cursor: 'pointer' }}
+                  onClick={() => setAddFriendsVisible(true)}
+                />
+              </Space>
+            </div>
+            <Input placeholder='支持对昵称/用户名模糊查询' onChange={({ target: { value } }) => handleFriendsFilter(value)} />
+          </>
         }
-        dataSource={friendsList}
+        dataSource={friendsFilterList}
         renderItem={item => {
           const { avatar, nickname, username } = item
           return (
@@ -186,50 +195,42 @@ const Talk = () => {
         messageFlagList={messageFlagList}
         setMessageFlagList={setMessageFlagList}
       />
-      {personInfo && (
-        <UserInfoModal
-          visible={userInfoVisible}
-          userInfo={personInfo}
-          onOk={() => setUserInfoVisible(false)}
-          onCancel={() => setUserInfoVisible(false)}
+    </div>
+    {personInfo && (<UserInfoModal
+      visible={userInfoVisible}
+      userInfo={personInfo}
+      onOk={() => setUserInfoVisible(false)}
+      onCancel={() => setUserInfoVisible(false)}
+    />)}
+    {friendsApplicationVisible && (
+      <Modal
+        title="好友申请"
+        width={800}
+        open={friendsApplicationVisible}
+        onOk={() => setFriendsApplicationVisible(false)}
+        onCancel={() => setFriendsApplicationVisible(false)}
+      >
+        <FriendsApplicationModal
+          listData={applicationList}
+          onListChange={setApplicationList}
+          setUserInfo={setPersonInfo}
+          setUserInfoVisible={setUserInfoVisible}
         />
-      )}
-      {
-        friendsApplicationVisible && (
-          <Modal
-            title="好友申请"
-            width={800}
-            open={friendsApplicationVisible}
-            onOk={() => setFriendsApplicationVisible(false)}
-            onCancel={() => setFriendsApplicationVisible(false)}
-          >
-            <FriendsApplicationModal
-              listData={applicationList}
-              onListChange={setApplicationList}
-              setUserInfo={setPersonInfo}
-              setUserInfoVisible={setUserInfoVisible}
-            />
-          </Modal>
-        )
-      }
-      {
-        addFriendsVisible && (
-          <Modal
-            title="添加好友"
-            width={800}
-            open={addFriendsVisible}
-            onOk={() => setAddFriendsVisible(false)}
-            onCancel={() => setAddFriendsVisible(false)}
-          >
-            <SearchFriendsModal
-              setUserInfo={setPersonInfo}
-              setUserInfoVisible={setUserInfoVisible}
-            />
-          </Modal>
-        )
-      }
-    </div >
-  )
+      </Modal>
+    )}
+    {addFriendsVisible && (< Modal
+      title="添加好友"
+      width={800}
+      open={addFriendsVisible}
+      onOk={() => setAddFriendsVisible(false)}
+      onCancel={() => setAddFriendsVisible(false)}
+    >
+      <SearchFriendsModal
+        setUserInfo={setPersonInfo}
+        setUserInfoVisible={setUserInfoVisible}
+      />
+    </Modal>)}
+  </>)
 }
 
 export default Talk

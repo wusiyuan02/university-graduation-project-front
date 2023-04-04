@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from 'react'
+
+import dayjs from 'dayjs'
+
 import { Input, Layout } from 'antd'
 import MessageBubbles from '../MessageBubbles'
+
+import style from './index.module.less'
 
 const userInfo = JSON.parse(localStorage.getItem('user_info'))
 
@@ -8,7 +13,6 @@ const ChatBox = ({ socket, chatPersonInfo, onMessageChange, messageList, message
   const [messageContent, setMessageContent] = useState('')
 
   useEffect(() => {
-    console.log(chatPersonInfo.username, 'chatPersonInfo.username')
     setMessageFlagList({ ...messageFlagList, [chatPersonInfo.username]: true })
     socket.emit('readMessage', { sendUsername: chatPersonInfo.username, receiverUsername: userInfo.username })
   }, [chatPersonInfo.username])
@@ -21,21 +25,28 @@ const ChatBox = ({ socket, chatPersonInfo, onMessageChange, messageList, message
     setMessageContent('')
   }
 
+  let lastMessageTimeStr = ''
+
   return (
-    <Layout
-      style={{
-        borderTopRightRadius: 8,
-        borderBottomRightRadius: 8,
-        border: '1px solid #d9d9d9',
-        borderLeft: 'none',
-        overflow: 'hidden'
-      }}
-    >
+    <Layout className={style.chatBox} >
       <Layout.Header style={{ textAlign: 'center', color: '#fff' }}>
         {chatPersonInfo.nickname || chatPersonInfo.username}
       </Layout.Header>
       <Layout.Content style={{ overflowY: 'auto', overflowX: 'hidden' }}>
-        {(messageList || []).map(messageItem => <MessageBubbles key={messageItem._id} username={userInfo.username} {...messageItem} />)}
+        {(messageList || []).map((messageItem, index) => {
+          const lastMessageTime = dayjs(lastMessageTimeStr)
+
+          if (index !== 0 && dayjs(messageItem.sendTime).isAfter(lastMessageTime) && dayjs(messageItem.sendTime).isBefore(lastMessageTime.add(3, 'm'))) {
+            lastMessageTimeStr = messageItem.sendTime
+            return (<MessageBubbles key={messageItem._id} username={userInfo.username} {...messageItem} />)
+          } else {
+            lastMessageTimeStr = messageItem.sendTime
+            return <>
+              <div className={style.time}>{messageItem.sendTime}</div>
+              <MessageBubbles key={messageItem._id} username={userInfo.username} {...messageItem} />
+            </>
+          }
+        })}
       </Layout.Content>
       <Layout.Footer style={{ padding: 16 }}>
         <Input.Search
