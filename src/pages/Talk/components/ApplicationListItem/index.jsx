@@ -67,6 +67,7 @@ const ApplicationListItem = ({
         })
     })
   }
+
   return (
     <div style={{ display: 'flex', marginTop: 16, alignItems: 'center' }}>
       <Avatar

@@ -21,6 +21,7 @@ const userInfo = JSON.parse(localStorage.getItem('user_info'))
 
 socket.on('connect', () => {
   console.log('链接成功！')
+  socket.emit('login', { username: userInfo.username })
 })
 
 const Talk = () => {
