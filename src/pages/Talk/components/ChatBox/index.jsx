@@ -1,11 +1,17 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Input, Layout } from 'antd'
 import MessageBubbles from '../MessageBubbles'
 
 const userInfo = JSON.parse(localStorage.getItem('user_info'))
 
-const ChatBox = ({ chatPersonInfo, onMessageChange, messageList }) => {
+const ChatBox = ({ socket, chatPersonInfo, onMessageChange, messageList, messageFlagList, setMessageFlagList }) => {
   const [messageContent, setMessageContent] = useState('')
+
+  useEffect(() => {
+    console.log(chatPersonInfo.username, 'chatPersonInfo.username')
+    setMessageFlagList({ ...messageFlagList, [chatPersonInfo.username]: true })
+    socket.emit('readMessage', { sendUsername: chatPersonInfo.username, receiverUsername: userInfo.username })
+  }, [chatPersonInfo.username])
 
   const handleSendMessage = value => {
     onMessageChange({

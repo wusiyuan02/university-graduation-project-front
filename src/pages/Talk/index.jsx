@@ -15,25 +15,31 @@ import ChatBox from './components/ChatBox'
 import SearchFriendsModal from './components/SearchFriendsModal'
 import FriendsApplicationModal from './components/FriendsApplicationModal'
 
+import style from './index.module.less'
 const socket = io('http://localhost:3000', { transports: ['websocket'] })
 
 const userInfo = JSON.parse(localStorage.getItem('user_info'))
 
 socket.on('connect', () => {
-  console.log('链接成功！')
   socket.emit('login', { username: userInfo.username })
 })
 
 const Talk = () => {
   const [addFriendsVisible, setAddFriendsVisible] = useState(false)
-  const [friendsApplicationVisible, setFriendsApplicationVisible] =
-    useState(false)
+  const [friendsApplicationVisible, setFriendsApplicationVisible] = useState(false)
   const [userInfoVisible, setUserInfoVisible] = useState(false)
+  // 描述好友申请弹窗
   const [applicationList, setApplicationList] = useState([])
+  // 描述好友列表
   const [friendsList, setFriendsList] = useState([])
+  // 描述个人信息弹窗
   const [personInfo, setPersonInfo] = useState(null)
+  // 聊天框个人信息
   const [chatInfo, setChatInfo] = useState({})
+  // 消息列表
   const [messageList, setMessageList] = useState({})
+  // 标记 是否有新消息
+  const [messageFlagList, setMessageFlagList] = useState({})
 
   useEffect(() => {
     getApplicationList()
@@ -50,8 +56,9 @@ const Talk = () => {
       if (data.length === 0) {
         return
       }
-      console.log(data)
-      setMessageList(data)
+      const { messageData, flagData } = data
+      setMessageList(messageData)
+      setMessageFlagList(flagData)
     } catch (err) {
       message.error(err)
     }
@@ -68,6 +75,7 @@ const Talk = () => {
       nextMessageList[messageListKey] = [messageInfo]
     }
     setMessageList(nextMessageList)
+    setMessageFlagList({ ...message, [sendUsername]: false })
   })
 
   // 获取好友列表
@@ -117,20 +125,10 @@ const Talk = () => {
     <div style={{ display: 'flex', height: 'calc(100vh - 96px)' }}>
       <List
         bordered={true}
-        style={{
-          width: 300,
-          height: 'calc(100vh - 96px)',
-          borderTopRightRadius: 0,
-          borderBottomRightRadius: 0
-        }}
+        className={style.leftList}
         header={
           <div
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              height: 42
-            }}
+            className={style.leftAsideHeader}
           >
             <h3>好友列表</h3>
             <Space size={16}>
@@ -154,14 +152,8 @@ const Talk = () => {
           const { avatar, nickname, username } = item
           return (
             <div
-              style={{
-                display: 'flex',
-                height: 76,
-                alignItems: 'center',
-                cursor: 'pointer',
-                background: chatInfo.username === username && '#ededed',
-                paddingLeft: 16
-              }}
+              className={style.leftBox}
+              style={{ background: chatInfo.username === username && '#ededed' }}
               onClick={() => {
                 setChatInfo(item)
               }}
@@ -181,14 +173,18 @@ const Talk = () => {
                   <h5>{nickname || username}</h5>
                 </div>
               </div>
+              {messageFlagList[username] === false && <div className={style.redDot}></div>}
             </div>
           )
         }}
       />
-      <ChatBox
+      < ChatBox
+        socket={socket}
         chatPersonInfo={chatInfo}
         onMessageChange={handleMessageChange}
         messageList={messageList[chatInfo.username]}
+        messageFlagList={messageFlagList}
+        setMessageFlagList={setMessageFlagList}
       />
       {personInfo && (
         <UserInfoModal
@@ -198,37 +194,41 @@ const Talk = () => {
           onCancel={() => setUserInfoVisible(false)}
         />
       )}
-      {friendsApplicationVisible && (
-        <Modal
-          title="好友申请"
-          width={800}
-          open={friendsApplicationVisible}
-          onOk={() => setFriendsApplicationVisible(false)}
-          onCancel={() => setFriendsApplicationVisible(false)}
-        >
-          <FriendsApplicationModal
-            listData={applicationList}
-            onListChange={setApplicationList}
-            setUserInfo={setPersonInfo}
-            setUserInfoVisible={setUserInfoVisible}
-          />
-        </Modal>
-      )}
-      {addFriendsVisible && (
-        <Modal
-          title="添加好友"
-          width={800}
-          open={addFriendsVisible}
-          onOk={() => setAddFriendsVisible(false)}
-          onCancel={() => setAddFriendsVisible(false)}
-        >
-          <SearchFriendsModal
-            setUserInfo={setPersonInfo}
-            setUserInfoVisible={setUserInfoVisible}
-          />
-        </Modal>
-      )}
-    </div>
+      {
+        friendsApplicationVisible && (
+          <Modal
+            title="好友申请"
+            width={800}
+            open={friendsApplicationVisible}
+            onOk={() => setFriendsApplicationVisible(false)}
+            onCancel={() => setFriendsApplicationVisible(false)}
+          >
+            <FriendsApplicationModal
+              listData={applicationList}
+              onListChange={setApplicationList}
+              setUserInfo={setPersonInfo}
+              setUserInfoVisible={setUserInfoVisible}
+            />
+          </Modal>
+        )
+      }
+      {
+        addFriendsVisible && (
+          <Modal
+            title="添加好友"
+            width={800}
+            open={addFriendsVisible}
+            onOk={() => setAddFriendsVisible(false)}
+            onCancel={() => setAddFriendsVisible(false)}
+          >
+            <SearchFriendsModal
+              setUserInfo={setPersonInfo}
+              setUserInfoVisible={setUserInfoVisible}
+            />
+          </Modal>
+        )
+      }
+    </div >
   )
 }
 
