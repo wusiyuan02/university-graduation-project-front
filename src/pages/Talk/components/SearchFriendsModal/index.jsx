@@ -5,8 +5,15 @@ import FriendListItem from '../FriendListItem'
 
 import { postUserList } from '@apis/talk'
 
+import _ from 'lodash'
+
+import style from './index.module.less'
 const SearchFriendsModal = ({ setUserInfo, setUserInfoVisible }) => {
   const [addFriendList, setAddFriendsList] = useState([])
+
+  useEffect(() => {
+    getAddFriendList('')
+  }, [])
 
   const getAddFriendList = async searchKey => {
     try {
@@ -20,29 +27,18 @@ const SearchFriendsModal = ({ setUserInfo, setUserInfoVisible }) => {
     }
   }
 
-  const handleSearch = ({ target: { value } }) => {
+  const handleSearch = _.debounce(({ target: { value } }) => {
     getAddFriendList(value)
-  }
-
-  useEffect(() => {
-    setAddFriendsList([])
-  }, [])
+  }, 2000)
 
   return (
     <div style={{ minHeight: 400 }}>
       <Input placeholder="支持输入用户名模糊查询" onChange={handleSearch} />
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: 300
-        }}
-      >
+      <div className={style.listBox}>
         {addFriendList.length === 0 ? (
           <Empty />
         ) : (
-          <div style={{ height: 300, width: '100%' }}>
+          <div className={style.listContainer}>
             <List
               itemLayout="vertical"
               dataSource={addFriendList}

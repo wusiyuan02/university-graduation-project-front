@@ -1,0 +1,26 @@
+.listBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 360px;
+}
+
+.listContainer {
+  height: 360px; 
+  overflow-y: scroll;
+   width: 100%;
+  &::-webkit-scrollbar {
+    width: 4px;    
+    /*height: 4px;*/
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    background: rgba(0,0,0,0.2);
+  }
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
+    border-radius: 0;
+    background: rgba(0,0,0,0.1);
+  }
+}
